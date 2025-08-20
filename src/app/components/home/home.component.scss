@@ -1,3 +1,22 @@
+.user-card {
+  display: flex;
+  align-items: center;
+}
+
 .user-card img {
-  width: 150px;
+  width: 32px;
+  margin: 6px 12px 6px 0;
+}
+
+h2 {
+  margin-bottom: 5px;
+  margin-left: -20px;
+}
+
+li {
+  list-style: none;
+}
+
+.ejercicios {
+  font-size: 12px;
 }

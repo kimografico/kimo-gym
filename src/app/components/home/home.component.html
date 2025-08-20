@@ -1,13 +1,8 @@
 <ul>
-  <h2>EJERCICIOS</h2>
-  <li *ngFor="let exercise of exercises">
-    {{ exercise.name }} - {{ exercise.muscle_group }}
-  </li>
-  <br />
   <h2>USUARIOS</h2>
   <div class="user-card" *ngFor="let user of users">
-    <h3>{{ user.name }}</h3>
     <img src="{{ avatar(user.avatar) }}" />
+    <span>{{ user.name }}</span>
   </div>
   <br />
   <h2>RUTINAS</h2>
@@ -15,4 +10,9 @@
   <br />
   <h2>SESIONES</h2>
   <li *ngFor="let session of sessions">{{ session.date }}</li>
+  <br />
+  <h2>EJERCICIOS</h2>
+  <li *ngFor="let exercise of exercises" class="ejercicios">
+    {{ exercise.name }} - {{ exercise.muscle_group }}
+  </li>
 </ul>
