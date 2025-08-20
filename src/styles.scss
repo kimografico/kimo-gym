@@ -1,1 +1,18 @@
-/* You can add global styles to this file, and also import other style files */
+@import "variables";
+@import url("https://fonts.googleapis.com/css2?family=Poppins&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Ovo&display=swap");
+
+body {
+  font-family: "Poppins", sans-serif;
+  background-color: $background-color;
+  color: $text-color;
+}
+
+h1 {
+  font-family: "Ovo", sans-serif;
+}
+
+.logo {
+  font-family: "Poppins", sans-serif;
+  font-size: 3rem;
+}

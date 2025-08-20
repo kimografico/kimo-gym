@@ -1,6 +1,14 @@
 {
   "name": "kimo-gym",
   "version": "0.0.0",
+  "description": "Aplicación para registrar sesiones de entrenamiento y rutinas, consumiendo Supabase como backend.",
+  "author": "Kimo <kimo.grafico@gmail.com> (kimografico.com)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kimografico/kimo-gym.git"
+  },
+  "homepage": "kimografico.com",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
