@@ -1,0 +1,25 @@
+<!-- Rutinas públicas (disponibles para todos) -->
+<div class="section">
+  <h2>RUTINAS PÚBLICAS</h2>
+  <div *ngIf="loading.publicRoutines" class="loading">
+    Cargando rutinas públicas...
+  </div>
+  <ul *ngIf="!loading.publicRoutines">
+    <li
+      *ngFor="let routine of publicRoutines"
+      class="routine-item"
+      (click)="viewPublicRoutineDetails(routine.id)"
+    >
+      <div class="routine-info">
+        <strong>🌍 {{ routine.name }}</strong>
+      </div>
+      <span class="click-hint">Clic para ver detalles</span>
+    </li>
+  </ul>
+  <div
+    *ngIf="!loading.publicRoutines && publicRoutines.length === 0"
+    class="no-data"
+  >
+    No hay rutinas públicas disponibles.
+  </div>
+</div>

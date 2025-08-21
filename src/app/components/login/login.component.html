@@ -1,1 +1,46 @@
-<p>login works!</p>
+<!-- Sección de autenticación -->
+<div class="auth-section" *ngIf="!isAuthenticated">
+  <h2>Iniciar Sesión</h2>
+  <input
+    type="text"
+    #userIdInput
+    placeholder="ID del usuario (UUID)"
+    class="form-input"
+  />
+  <button
+    (click)="loginUser(userIdInput.value)"
+    [disabled]="loading.auth"
+    class="btn-login"
+  >
+    {{ loading.auth ? "Autenticando..." : "Iniciar Sesión" }}
+  </button>
+  <br /><br />
+  <small>Introduce un UUID válido de la tabla users</small>
+  <!-- Botones de prueba (para desarrollo) -->
+  <div class="debug-section" *ngIf="!isAuthenticated">
+    <button (click)="testLogin()" class="btn-test">
+      Probar Login (actualiza el ID en el código)
+    </button>
+  </div>
+</div>
+
+<!-- Panel del usuario autenticado -->
+<div class="user-panel" *ngIf="isAuthenticated && currentUser">
+  <div class="user-info">
+    <img
+      [src]="avatar(currentUser.avatar)"
+      [alt]="currentUser.name"
+      class="user-avatar"
+    />
+    <div class="user-details">
+      <h2>Bienvenido, {{ currentUser.name }}</h2>
+      <p>ID: {{ currentUser.id }}</p>
+    </div>
+    <div class="user-actions">
+      <button (click)="logoutUser()" class="btn-logout">Cerrar Sesión</button>
+      <button (click)="refreshUserData()" class="btn-refresh">
+        Actualizar
+      </button>
+    </div>
+  </div>
+</div>

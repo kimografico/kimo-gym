@@ -1,0 +1,28 @@
+<!-- Secciones del usuario autenticado -->
+<div class="user-sections" *ngIf="isAuthenticated">
+  <!-- Mis sesiones -->
+  <div class="section">
+    <h2>MIS SESIONES</h2>
+    <div *ngIf="loading.userSessions" class="loading">
+      Cargando tus sesiones...
+    </div>
+    <ul *ngIf="!loading.userSessions">
+      <li
+        *ngFor="let session of userSessions"
+        class="session-item"
+        (click)="viewUserSessionDetails(session.id)"
+      >
+        <div class="session-info">
+          <strong>Sesión del {{ session.date | date : "mediumDate" }}</strong>
+        </div>
+        <span class="click-hint">Clic para ver detalles</span>
+      </li>
+    </ul>
+    <div
+      *ngIf="!loading.userSessions && userSessions.length === 0"
+      class="no-data"
+    >
+      No tienes sesiones registradas aún.
+    </div>
+  </div>
+</div>

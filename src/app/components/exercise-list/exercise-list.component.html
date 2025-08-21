@@ -1,0 +1,33 @@
+<div class="section">
+  <h2>EJERCICIOS</h2>
+  <div class="bloque-ejercicios">
+    <div *ngIf="loading.exercises" class="loading">Cargando ejercicios...</div>
+    <ul *ngIf="!loading.exercises">
+      <li *ngFor="let exercise of exercises" class="ejercicios">
+        <div class="exercise-title">
+          <img
+            [src]="exerciseImage(exercise.image)"
+            [alt]="exercise.name"
+            class="exercise-thumb"
+          />
+          <p>
+            <strong>{{ exercise.name }}</strong>
+          </p>
+        </div>
+        <div class="exercise-info">
+          <div class="exercise-details">
+            <p *ngIf="exercise.description" class="exercise-description">
+              {{ exercise.description }}
+            </p>
+            <p>Grupo muscular: {{ exercise.muscle_group }}</p>
+            <!-- <p>Dificultad: {{ exercise.difficulty }}/5</p> -->
+            <!-- <p *ngIf="exercise.equipment">Equipo: {{ exercise.equipment }}</p> -->
+          </div>
+        </div>
+      </li>
+    </ul>
+    <div *ngIf="!loading.exercises && exercises.length === 0" class="no-data">
+      No hay ejercicios disponibles.
+    </div>
+  </div>
+</div>

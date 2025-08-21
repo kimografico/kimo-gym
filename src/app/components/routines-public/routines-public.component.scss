@@ -1,0 +1,60 @@
+/* ============= SECCIONES ============= */
+.section {
+  margin-bottom: 30px;
+
+  h2 {
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 5px;
+    margin-bottom: 15px;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+}
+
+/* ============= RUTINAS ============= */
+.routine-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  .routine-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
+    strong {
+      color: #333;
+      font-size: 1.1em;
+    }
+
+    .routine-visibility {
+      font-size: 0.9em;
+      color: #666;
+    }
+
+    .routine-date {
+      font-size: 0.85em;
+      color: #888;
+    }
+  }
+
+  .click-hint {
+    font-size: 0.8em;
+    color: #007bff;
+    opacity: 0.7;
+  }
+
+  &.user-routine {
+    border-left: 4px solid #28a745;
+  }
+}

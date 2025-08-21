@@ -2,20 +2,22 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { DataService } from '../../services/data.service';
 import { AuthService } from '../../services/auth.service';
-import { AuthUser } from '../../interfaces';
+import { Session, AuthUser } from '../../interfaces';
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss'],
+  selector: 'app-sessions-user',
+  templateUrl: './sessions-user.component.html',
+  styleUrls: ['./sessions-user.component.scss'],
 })
-export class LoginComponent implements OnInit, OnDestroy {
+export class SessionsUserComponent implements OnInit, OnDestroy {
   // Datos del usuario autenticado
   currentUser: AuthUser | null = null;
+  userSessions: Session[] = [];
   isAuthenticated = false;
 
   // Estados de carga
   loading = {
+    userSessions: false,
     auth: false,
   };
 
@@ -34,6 +36,8 @@ export class LoginComponent implements OnInit, OnDestroy {
         this.isAuthenticated = isAuth;
         if (isAuth) {
           this.loadUserData();
+        } else {
+          this.clearUserData();
         }
       }
     );
@@ -54,52 +58,44 @@ export class LoginComponent implements OnInit, OnDestroy {
   async loadUserData() {
     const userId = this.authService.getCurrentUserId();
     if (!userId) return;
+
+    await Promise.all([this.loadUserSessions(userId)]);
   }
 
-  // ============= AUTENTICACIÓN =============
-
-  async loginUser(userId: string) {
-    if (!userId.trim()) return;
-
-    this.loading.auth = true;
+  async loadUserSessions(userId: string) {
+    this.loading.userSessions = true;
     try {
-      const success = await this.authService.login(userId);
-      if (success) {
-        console.log('Usuario autenticado correctamente');
-      } else {
-        console.error('Error en autenticación - usuario no encontrado');
-        alert('Usuario no encontrado');
-      }
+      this.userSessions = await this.dataService.getUserSessions(userId);
+      console.log('Sesiones del usuario cargadas:', this.userSessions.length);
     } catch (error) {
-      console.error('Error en login:', error);
-      alert('Error en la autenticación');
+      console.error('Error cargando sesiones del usuario:', error);
     } finally {
-      this.loading.auth = false;
+      this.loading.userSessions = false;
     }
   }
 
-  logoutUser() {
-    this.authService.logout();
-    console.log('Usuario desconectado');
+  private clearUserData() {
+    this.userSessions = [];
   }
 
-  refreshUserData() {
-    this.authService.refreshUserData();
-    console.log('Usuario refrescado');
+  // Obtener datos del usuario rápidamente desde localStorage
+  getUserInfo() {
+    return this.authService.getUserData();
   }
 
-  // ============= HELPERS =============
+  // Para ver detalles de sesión del usuario
+  async viewUserSessionDetails(sessionId: string) {
+    const userId = this.authService.getCurrentUserId();
+    if (!userId) return;
 
-  avatar(filename: string | null): string {
-    return filename
-      ? this.dataService.getAvatarUrl(filename)
-      : '/assets/images/default-avatar.jpg';
-  }
-
-  // ============= MÉTODOS PARA DEBUGGING =============
-
-  // Para hacer pruebas rápidas con IDs reales de tu BD
-  async testLogin() {
-    await this.loginUser('47ab8e68-7a3d-42c7-8bec-3c2c94bfaa8a');
+    try {
+      const session = await this.dataService.getUserSessionWithExercises(
+        sessionId,
+        userId
+      );
+      console.log('Sesión del usuario con ejercicios:', session);
+    } catch (error) {
+      console.error('Error:', error);
+    }
   }
 }
