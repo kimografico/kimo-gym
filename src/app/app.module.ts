@@ -9,10 +9,21 @@ import { ExerciseListComponent } from './components/exercise-list/exercise-list.
 import { RoutinesPublicComponent } from './components/routines-public/routines-public.component';
 import { RoutinesUserComponent } from './components/routines-user/routines-user.component';
 import { SessionsUserComponent } from './components/sessions-user/sessions-user.component';
+import { RegisterComponent } from './components/register/register.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
-  declarations: [AppComponent, HomeComponent, LoginComponent, ExerciseListComponent, RoutinesPublicComponent, RoutinesUserComponent, SessionsUserComponent],
-  imports: [BrowserModule, AppRoutingModule],
+  declarations: [
+    AppComponent,
+    HomeComponent,
+    LoginComponent,
+    ExerciseListComponent,
+    RoutinesPublicComponent,
+    RoutinesUserComponent,
+    SessionsUserComponent,
+    RegisterComponent,
+  ],
+  imports: [BrowserModule, AppRoutingModule, FormsModule],
   providers: [],
   bootstrap: [AppComponent],
 })

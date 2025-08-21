@@ -1,0 +1,127 @@
+<div class="register-container">
+  <div class="register-card">
+    <h2>Crear Cuenta</h2>
+
+    <form (ngSubmit)="onSubmit()" #registerForm="ngForm">
+      <!-- Nombre -->
+      <div class="form-group">
+        <label for="name">Nombre completo</label>
+        <input
+          type="text"
+          id="name"
+          name="name"
+          [(ngModel)]="formData.name"
+          placeholder="Tu nombre completo"
+          class="form-input"
+          required
+          #nameInput="ngModel"
+        />
+        <div class="error-text" *ngIf="nameInput.invalid && nameInput.touched">
+          El nombre es obligatorio
+        </div>
+      </div>
+
+      <!-- Email -->
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          [(ngModel)]="formData.email"
+          placeholder="tu@email.com"
+          class="form-input"
+          required
+          email
+          #emailInput="ngModel"
+        />
+        <div
+          class="error-text"
+          *ngIf="emailInput.invalid && emailInput.touched"
+        >
+          <span *ngIf="emailInput.errors?.['required']"
+            >El email es obligatorio</span
+          >
+          <span *ngIf="emailInput.errors?.['email']">Email inválido</span>
+        </div>
+      </div>
+
+      <!-- Contraseña -->
+      <div class="form-group">
+        <label for="password">Contraseña</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          [(ngModel)]="formData.password"
+          placeholder="Mínimo 6 caracteres"
+          class="form-input"
+          required
+          minlength="6"
+          #passwordInput="ngModel"
+        />
+        <div
+          class="error-text"
+          *ngIf="passwordInput.invalid && passwordInput.touched"
+        >
+          <span *ngIf="passwordInput.errors?.['required']"
+            >La contraseña es obligatoria</span
+          >
+          <span *ngIf="passwordInput.errors?.['minlength']"
+            >Mínimo 6 caracteres</span
+          >
+        </div>
+      </div>
+
+      <!-- Confirmar contraseña -->
+      <div class="form-group">
+        <label for="confirmPassword">Confirmar contraseña</label>
+        <input
+          type="password"
+          id="confirmPassword"
+          name="confirmPassword"
+          [(ngModel)]="formData.confirmPassword"
+          placeholder="Repite tu contraseña"
+          class="form-input"
+          required
+          #confirmPasswordInput="ngModel"
+        />
+        <div
+          class="error-text"
+          *ngIf="
+            confirmPasswordInput.touched &&
+            formData.password !== formData.confirmPassword
+          "
+        >
+          Las contraseñas no coinciden
+        </div>
+      </div>
+
+      <!-- Mensajes de error y éxito -->
+      <div class="message error-message" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+
+      <div class="message success-message" *ngIf="successMessage">
+        {{ successMessage }}
+      </div>
+
+      <!-- Botón de envío -->
+      <button
+        type="submit"
+        class="btn-submit"
+        [disabled]="loading || registerForm.invalid"
+      >
+        {{ loading ? "Creando cuenta..." : "Crear Cuenta" }}
+      </button>
+    </form>
+
+    <!-- Link para ir al login -->
+    <div class="login-link">
+      <p>
+        ¿Ya tienes cuenta?
+        <a (click)="goToLogin()" class="link">Iniciar sesión</a>
+      </p>
+    </div>
+  </div>
+</div>

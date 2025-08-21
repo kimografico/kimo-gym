@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { DataService } from '../../services/data.service';
 import { AuthService } from '../../services/auth.service';
@@ -10,21 +11,28 @@ import { AuthUser } from '../../interfaces';
   styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent implements OnInit, OnDestroy {
-  // Datos del usuario autenticado
+  // Formulario de login
+  formData = {
+    email: '',
+    password: '',
+  };
+
+  // Estados del componente
   currentUser: AuthUser | null = null;
   isAuthenticated = false;
-
-  // Estados de carga
-  loading = {
-    auth: false,
-  };
+  loading = false;
+  errorMessage = '';
+  showForgotPassword = false;
+  resetEmail = '';
+  resetMessage = '';
 
   private authSubscription?: Subscription;
   private userSubscription?: Subscription;
 
   constructor(
     private dataService: DataService,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) {}
 
   async ngOnInit() {
@@ -33,7 +41,8 @@ export class LoginComponent implements OnInit, OnDestroy {
       (isAuth) => {
         this.isAuthenticated = isAuth;
         if (isAuth) {
-          this.loadUserData();
+          // Redirigir al home si ya está autenticado
+          this.router.navigate(['/home']);
         }
       }
     );
@@ -49,43 +58,113 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.userSubscription?.unsubscribe();
   }
 
-  // ============= CARGA DE DATOS DEL USUARIO =============
+  // ============= LOGIN CON EMAIL/PASSWORD =============
 
-  async loadUserData() {
-    const userId = this.authService.getCurrentUserId();
-    if (!userId) return;
-  }
+  async onSubmit() {
+    // Resetear mensaje de error
+    this.errorMessage = '';
 
-  // ============= AUTENTICACIÓN =============
+    // Validaciones básicas
+    if (!this.validateForm()) return;
 
-  async loginUser(userId: string) {
-    if (!userId.trim()) return;
+    this.loading = true;
 
-    this.loading.auth = true;
     try {
-      const success = await this.authService.login(userId);
-      if (success) {
-        console.log('Usuario autenticado correctamente');
+      const result = await this.authService.signIn(
+        this.formData.email,
+        this.formData.password
+      );
+
+      if (result.success) {
+        console.log('Login exitoso');
+        // La redirección se maneja automáticamente en el subscription
       } else {
-        console.error('Error en autenticación - usuario no encontrado');
-        alert('Usuario no encontrado');
+        this.errorMessage = result.message;
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error en login:', error);
-      alert('Error en la autenticación');
+      this.errorMessage = error.message || 'Error en la autenticación';
     } finally {
-      this.loading.auth = false;
+      this.loading = false;
     }
   }
 
-  logoutUser() {
-    this.authService.logout();
-    console.log('Usuario desconectado');
+  private validateForm(): boolean {
+    if (!this.formData.email.trim()) {
+      this.errorMessage = 'El email es obligatorio';
+      return false;
+    }
+
+    if (!this.formData.password) {
+      this.errorMessage = 'La contraseña es obligatoria';
+      return false;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(this.formData.email)) {
+      this.errorMessage = 'Email inválido';
+      return false;
+    }
+
+    return true;
   }
 
-  refreshUserData() {
-    this.authService.refreshUserData();
-    console.log('Usuario refrescado');
+  // ============= RECUPERACIÓN DE CONTRASEÑA =============
+
+  async sendResetPassword() {
+    if (!this.resetEmail.trim()) {
+      this.resetMessage = 'Introduce tu email';
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(this.resetEmail)) {
+      this.resetMessage = 'Email inválido';
+      return;
+    }
+
+    try {
+      const result = await this.authService.resetPassword(this.resetEmail);
+      this.resetMessage = result.message;
+
+      if (result.success) {
+        // Cerrar el formulario de reset después de 3 segundos
+        setTimeout(() => {
+          this.showForgotPassword = false;
+          this.resetEmail = '';
+          this.resetMessage = '';
+        }, 3000);
+      }
+    } catch (error: any) {
+      this.resetMessage = error.message || 'Error enviando email';
+    }
+  }
+
+  toggleForgotPassword() {
+    this.showForgotPassword = !this.showForgotPassword;
+    this.resetMessage = '';
+    this.resetEmail = '';
+  }
+
+  // ============= NAVEGACIÓN =============
+
+  goToRegister() {
+    this.router.navigate(['/register']);
+  }
+
+  goToHome() {
+    this.router.navigate(['/home']);
+  }
+
+  // ============= LOGOUT (por si está autenticado) =============
+
+  async logoutUser() {
+    try {
+      await this.authService.signOut();
+      console.log('Usuario desconectado');
+    } catch (error) {
+      console.error('Error en logout:', error);
+    }
   }
 
   // ============= HELPERS =============
@@ -96,10 +175,31 @@ export class LoginComponent implements OnInit, OnDestroy {
       : '/assets/images/default-avatar.jpg';
   }
 
-  // ============= MÉTODOS PARA DEBUGGING =============
+  // ============= MÉTODOS LEGACY (para testing) =============
 
-  // Para hacer pruebas rápidas con IDs reales de tu BD
   async testLogin() {
-    await this.loginUser('47ab8e68-7a3d-42c7-8bec-3c2c94bfaa8a');
+    console.warn('Usando login legacy - considera usar el sistema real');
+    await this.loginUserLegacy('47ab8e68-7a3d-42c7-8bec-3c2c94bfaa8a');
+  }
+
+  private async loginUserLegacy(userId: string) {
+    if (!userId.trim()) return;
+
+    this.loading = true;
+    try {
+      const success = await this.authService.login(userId);
+      if (success) {
+        console.log('Usuario autenticado correctamente (legacy)');
+        this.router.navigate(['/home']);
+      } else {
+        console.error('Error en autenticación - usuario no encontrado');
+        this.errorMessage = 'Usuario no encontrado';
+      }
+    } catch (error) {
+      console.error('Error en login:', error);
+      this.errorMessage = 'Error en la autenticación';
+    } finally {
+      this.loading = false;
+    }
   }
 }

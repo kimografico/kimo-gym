@@ -171,6 +171,24 @@ export class DataService {
     return data;
   }
 
+  async createUser(user: {
+    id: string;
+    name: string;
+    avatar: string | null;
+  }): Promise<User | null> {
+    const { data, error } = await supabase
+      .from('users')
+      .insert(user)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error creando usuario:', error);
+      return null;
+    }
+    return data;
+  }
+
   // ============= URLS DE ARCHIVOS =============
 
   getAvatarUrl(filename: string): string {
